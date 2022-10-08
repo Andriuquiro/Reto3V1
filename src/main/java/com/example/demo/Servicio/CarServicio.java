@@ -1,6 +1,7 @@
 package com.example.demo.Servicio;
 
 import com.example.demo.Modelo.Car;
+import com.example.demo.Modelo.Gama;
 import com.example.demo.Repositorio.CarRepositorio;
 import java.util.List;
 import java.util.Optional;
@@ -32,5 +33,42 @@ public class CarServicio {
                 return car;
             }           
         }
+    }
+    
+    public Car update(Car car) {
+        if (car.getIdCar() != null) {
+            Optional<Car> e = carRepository.getCar(car.getIdCar());
+            if (!e.isEmpty()) {
+                if (car.getName() != null) {
+                    e.get().setName(car.getName());
+                }
+                if (car.getBrand() != null) {
+                    e.get().setBrand(car.getBrand());
+                }
+                if (car.getYear() != null) {
+                    e.get().setYear(car.getYear());
+                }
+                if (car.getDescription() != null) {
+                    e.get().setDescription(car.getDescription());
+                }
+                if (car.getGama() != null) {
+                    e.get().setGama(car.getGama());
+                }
+                carRepository.save(e.get());
+                return e.get();
+            }else{
+                return car;
+            }
+        }else{
+            return car;
+        }
+    }
+    
+    public boolean deleteCar(int carId){
+        Boolean d=getCar(carId).map(car -> {
+            carRepository.delete(car);
+            return true;
+        }).orElse(false);
+        return d;
     }
 }

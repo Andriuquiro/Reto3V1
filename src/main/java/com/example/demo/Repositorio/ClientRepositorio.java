@@ -27,4 +27,9 @@ public class ClientRepositorio {
         return clientCrudRepository.save(car);
 
     }
+    
+    public void delete(Client client){
+        clientCrudRepository.delete(client);
+        
+    }
 }

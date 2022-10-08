@@ -27,4 +27,9 @@ public class MessageRepositorio {
         return messageCrudRepository.save(car);
         
     }
+    
+    public void delete(Message message){
+        messageCrudRepository.delete(message);
+        
+    }
 }
