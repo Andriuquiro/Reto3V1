@@ -1,13 +1,16 @@
 package com.example.demo.Servicio;
 
-import com.example.demo.Modelo.Client;
 import com.example.demo.Modelo.Reservation;
+import com.example.demo.Repositorio.CountClient;
 import com.example.demo.Repositorio.ReservationRepositorio;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 
 @Service
 public class ReservationServicio {
@@ -35,7 +38,7 @@ public class ReservationServicio {
             }
         }
     }
-    
+
     public Reservation update(Reservation reservation) {
         if (reservation.getIdReservation() != null) {
             Optional<Reservation> e = reservationRepository.getReservation(reservation.getIdReservation());
@@ -51,19 +54,50 @@ public class ReservationServicio {
                 }
                 reservationRepository.save(e.get());
                 return (e.get());
-            }else{
+            } else {
                 return reservation;
             }
-        }else{
+        } else {
             return reservation;
         }
     }
-    
-    public boolean deleteReservation(int reservationId){
-        Boolean d=getReservation(reservationId).map(reservation -> {
+
+    public boolean deleteReservation(int reservationId) {
+        Boolean d = getReservation(reservationId).map(reservation -> {
             reservationRepository.delete(reservation);
             return true;
         }).orElse(false);
         return d;
     }
+    ////////Reports///////////////////////////
+
+    public Status getReservationStatusReport() {
+        List<Reservation> completed = reservationRepository.getReservationByStatus("completed");
+        List<Reservation> cancelled = reservationRepository.getReservationByStatus("cancelled");
+        return new Status(completed.size(), cancelled.size());
+    }
+
+    public List<Reservation> informePeriodoTiempoReservas(String datoA, String datoB) {
+        SimpleDateFormat parser = new SimpleDateFormat("yyyy-MM-dd");
+        Date a = new Date();
+        Date b = new Date();
+
+        try {
+            a = parser.parse(datoA);
+            b = parser.parse(datoB);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (a.before(b)) {
+            return reservationRepository.informePeriodoTiempoReservas(a, b);
+
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    public List<CountClient> getTopClients() {
+        return reservationRepository.getTopClient();
+    }
+
 }
